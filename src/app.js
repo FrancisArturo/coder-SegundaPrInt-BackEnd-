@@ -96,6 +96,5 @@ export default class App {
         );
         this.app.set("view engine", "handlebars");
         this.app.set("views", __dirname + "/views");
-        console.log(__dirname)
     }
 }

@@ -1,7 +1,8 @@
 import { Router } from "express";
 import ProductsManager from '../dao/managers/dbManagers/products.manager.js';
-import { authMdw } from "../middleware/auth.middleware.js";
+//import { authMdw } from "../middleware/auth.middleware.js";
 import CartsManager from "../dao/managers/dbManagers/carts.manager.js";
+import handlePolicies from "../middleware/handle-police.middleware.js";
 
 export default class viewsRoutes {
     path = "/views";
@@ -23,10 +24,11 @@ export default class viewsRoutes {
         this.router.get (`${this.path}/recover`, async (req, res) => {
             res.render("recover");
         });
-        this.router.get(`${this.path}/home`, authMdw, async (req, res) => {
+        this.router.get(`${this.path}/home`, handlePolicies(["admin"]), async (req, res) => {
             //query para buscar productos por categoria: frutas, lacteos o panificados
             const { limit = 10, page = 1, category = "all", sort = undefined  } = req.query;
             const user = req.user;
+            //console.log(user)
             try {
                 const { docs, hasPrevPage, hasNextPage, nextPage, prevPage } = await this.productsManager.getallProducts(limit, page, category, sort);
                 res.render("home", { products : docs, hasPrevPage, hasNextPage, nextPage, prevPage, page, limit, category, sort, user });

@@ -1,6 +1,4 @@
 import passport from "passport";
-import local from "passport-local";
-//import UserManager from "../dao/managers/dbManagers/user.manager.js";
 import userModel from "../dao/models/user.models.js";
 import GithubStrategy from "passport-github2";
 import jwt from "passport-jwt";
@@ -13,7 +11,6 @@ const ExtractJWT = jwt.ExtractJwt;
 
 
 
-const LocalStrategy = local.Strategy;
 const initializePassport = () => {
 
     passport.use("jwt", new JWTStrategy(
@@ -22,7 +19,7 @@ const initializePassport = () => {
             secretOrKey: SECRET_CODE,
         },
         async (jwtPayload, done) => {
-            console.log(jwtPayload);
+            //console.log(jwtPayload);
             try {
                 return done(null, jwtPayload);
             } catch (error) {
@@ -31,37 +28,6 @@ const initializePassport = () => {
         }
     ))
 
-
-
-    // const userManager = new UserManager();
-    // passport.use("login", new LocalStrategy({ usernameField: "email", passwordField: "password", passReqToCallback: true },
-    //     async (req, username, password, done) => {
-    //         try {   
-    //             const user = await userManager.loginUser(req.body);
-    //             if (user === "User not found") {
-    //                 return done(null, false, { message: "User not found" });
-    //             } else if (user === "Incorrect password") {
-    //                 return done(null, false, { message: "Incorrect password" });
-    //             }
-    //             return done(null, user);
-    //         } catch (error) {
-    //             return done(error);
-    //         }
-    //     }
-    // ));
-    // passport.use("register", new LocalStrategy({ usernameField: "email", passwordField: "password", passReqToCallback: true },
-    //     async (req, username, password, done) => {
-    //         try {
-    //             let user = await userManager.createUser(req.body);
-    //             if (user === "User already exists") {
-    //                 return done(null, false, { message: "User already exists" });
-    //             }
-    //             return done(null, user);
-    //         } catch (error) {
-    //             return done(error);
-    //         }
-    //     }
-    // ));
 
 
     passport.use(new GithubStrategy({

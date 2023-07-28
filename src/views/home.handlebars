@@ -1,6 +1,6 @@
 <div>
     <h1>Home</h1>
-    <h2>Welcome {{this.user.role}}: {{this.user.firstName}} {{this.user.lastName}} </h2>
+    <h2>Welcome {{this.user.user.role}}: {{this.user.user.firstName}} {{this.user.user.lastName}}</h2>
     <form action="/api/v1/session/logout" method="get">
         <br />
         <button type="submit">logout</button>

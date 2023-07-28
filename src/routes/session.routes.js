@@ -2,7 +2,9 @@ import { Router } from "express";
 import UserManager from "../dao/managers/dbManagers/user.manager.js";
 import passport from "passport";
 //import userModel from "../dao/models/user.models.js";
-import generateJWT from "../utils/jwt.js";
+import {generateJWT} from "../utils/jwt.js";
+import handlePolicies from "../middleware/handle-police.middleware.js";
+
 
 
 
@@ -42,31 +44,19 @@ export default class sessionRoutes {
                 }
                 const signUser = {
                     user: userLogin._id,
+                    firstName: userLogin.firstName,
+                    lastName: userLogin.lastName,
                     email: userLogin.email,
                     role: userLogin.role,
-                }
-
-                const token = await generateJWT({...signUser});
-                console.log(token);
-                return res.redirect("/views/home");
+                };
+                const token = generateJWT({...signUser});
+                return res.json({ message: `welcome ${signUser.firstName},login success`, token });
+                //return res.redirect("/views/home");
             } catch (error) {
-                return res.status(400).json({ message: error.message });
+                return res.status(400).json({ message: error.message});
             }
             
             
-        }
-        );
-        this.router.get(`${this.path}/failedlogin`, (req, res) => {
-            res.send("failed login");
-        }
-        );
-        this.router.get(`${this.path}/logout`, async (req, res) => {
-            req.session.destroy( (err) => {
-                if (!err) {
-                    return res.redirect("/views/login");
-                }
-                return res.status(400).json({ message: err.message });
-            });
         }
         );
         this.router.post(`${this.path}/recover`, async (req, res) => {
@@ -75,12 +65,6 @@ export default class sessionRoutes {
                 if (user === "User not found") {
                     return res.render("recover", {error: "User not found"});
                 }
-                // req.session.user = {
-                //     firstName: user.firstName,
-                //     lastName: user.lastName,
-                //     email: user.email,
-                //     role: user.role,
-                // };
                 return res.redirect("/views/login");
             }
             catch (error) {
@@ -92,18 +76,25 @@ export default class sessionRoutes {
         this.router.get(`${this.path}/github/callback`, passport.authenticate("github", { failureRedirect: "/api/v1/session/failedlogin" }),
             async (req, res) => {
                 try {
-                    // req.session.user = {
-                    //     firstName: req.user.firstName,
-                    //     lastName: req.user.lastName,
-                    //     email: req.user.email,
-                    //     role: req.user.role,
-                    // };
                     return res.redirect("/views/home");
                 } catch (error) {
                     return res.status(400).json({ message: error.message });
                 }
             }
         );
+        this.router.get(`${this.path}/current`,  handlePolicies(["public"]), async (req, res) =>{
+            const user = req.user;
+            console.log(user)
+            return res.json({message: "Public access", user})
+        } )
+        this.router.get(`${this.path}/current/admin`,  handlePolicies(["admin"]), async (req, res) =>{
+            const user = req.user;
+            return res.json({message: "admin access", user})
+        })
+        this.router.get(`${this.path}/current/user`,  handlePolicies(["admin", "user"]), async (req, res) =>{
+            const user = req.user;
+            return res.json({message: "admin and user access", user})
+        })
     }
 }
 
