@@ -7,6 +7,7 @@ function handlePolicies(policies) {
         }
 
         passport.authenticate("jwt", {session: false}, (err, userJWT, info) => {
+            //console.log(userJWT)
             if (err) {
                 return next(err);
             }

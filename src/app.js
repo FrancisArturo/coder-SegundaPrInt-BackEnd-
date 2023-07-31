@@ -4,9 +4,6 @@ import handlebars from "express-handlebars";
 import __dirname from "./dirname.js"
 import  connectDB from "./db/mongo.config.js";
 import cookieParser from "cookie-parser";
-// import session from "express-session";
-// import MongoStore from "connect-mongo";
-// import  { configConnection }  from "./db/mongo.config.js";
 import passport from "passport";
 import initializePassport from "./config/passport.config.js";
 
@@ -53,19 +50,8 @@ export default class App {
         this.app.use(express.urlencoded({ extended: true }));
         this.app.use(express.static(__dirname + "/public"));
         this.app.use(cookieParser());
-        // this.app.use(session({
-        //     store: MongoStore.create({
-        //         mongoUrl: configConnection.url,
-        //         mongoOptions: configConnection.options,
-        //         ttl: 600,
-        //     }),
-        //     secret: "secretCode",
-        //     resave: true,
-        //     saveUninitialized: true
-        // }));
         initializePassport();
         this.app.use(passport.initialize());
-        // this.app.use(passport.session());
     }
     listen() {
         this.server = this.app.listen(this.port, () => {

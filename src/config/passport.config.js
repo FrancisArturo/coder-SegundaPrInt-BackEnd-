@@ -2,7 +2,7 @@ import passport from "passport";
 import userModel from "../dao/models/user.models.js";
 import GithubStrategy from "passport-github2";
 import jwt from "passport-jwt";
-import { SECRET_CODE } from "../utils/jwt.js";
+import { SECRET_CODE, cookieExtractor } from "../utils/jwt.js";
 
 
 
@@ -11,19 +11,19 @@ const ExtractJWT = jwt.ExtractJwt;
 
 
 
+
 const initializePassport = () => {
 
     passport.use("jwt", new JWTStrategy(
         {
-            jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
+            jwtFromRequest: ExtractJWT.fromExtractors([cookieExtractor]),
             secretOrKey: SECRET_CODE,
         },
         async (jwtPayload, done) => {
-            //console.log(jwtPayload);
             try {
                 return done(null, jwtPayload);
-            } catch (error) {
-                return done(error)
+            } catch (err) {
+                return done(err)
             }
         }
     ))

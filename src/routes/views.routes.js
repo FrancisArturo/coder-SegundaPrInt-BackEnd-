@@ -24,7 +24,7 @@ export default class viewsRoutes {
         this.router.get (`${this.path}/recover`, async (req, res) => {
             res.render("recover");
         });
-        this.router.get(`${this.path}/home`, handlePolicies(["admin"]), async (req, res) => {
+        this.router.get(`${this.path}/home`, handlePolicies(["admin", "user"]), async (req, res) => {
             //query para buscar productos por categoria: frutas, lacteos o panificados
             const { limit = 10, page = 1, category = "all", sort = undefined  } = req.query;
             const user = req.user;

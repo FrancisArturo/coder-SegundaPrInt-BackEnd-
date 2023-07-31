@@ -50,7 +50,11 @@ export default class sessionRoutes {
                     role: userLogin.role,
                 };
                 const token = generateJWT({...signUser});
-                return res.json({ message: `welcome ${signUser.firstName},login success`, token });
+                console.log(token)
+                return res.cookie("cookieToken", token, {
+                    maxAge:60*60*1000,
+                    httpOnly: true
+                }).send({message: "Welcome: " + signUser.firstName + ", login success."});
                 //return res.redirect("/views/home");
             } catch (error) {
                 return res.status(400).json({ message: error.message});
@@ -84,7 +88,6 @@ export default class sessionRoutes {
         );
         this.router.get(`${this.path}/current`,  handlePolicies(["public"]), async (req, res) =>{
             const user = req.user;
-            console.log(user)
             return res.json({message: "Public access", user})
         } )
         this.router.get(`${this.path}/current/admin`,  handlePolicies(["admin"]), async (req, res) =>{
